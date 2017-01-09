@@ -55,6 +55,8 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 	$r = $_GET['r'];
 	$s = $_GET['s'];
 	
+	include('mod/dbcon.php');
+	
 	// ENABLE SSL
 	$arrContextOptions=array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, ),);  
 	// REMOVE SPACES IN SERVER AND GUILD NAME TO PREVENT BUGS IN URL
@@ -231,6 +233,20 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 			$cos = $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['28']['quantity'];
 					
 			$mythicsum = $eoa+$dht+$nel+$hov+$vh+$vow+$brh+$mos+$arc+$cos;
+			
+			// HIGHEST M+ IN TIME ACCORDING TO ACHIEVEMENTS
+			if(in_array('11162', $data['achievements']['achievementsCompleted'])) {
+				$mplus = '<span style="color: green;">15</span>';
+			}	
+			elseif(in_array('11185', $data['achievements']['achievementsCompleted'])) {
+				$mplus = '<span style="color: orange;">10</span>';
+			}
+			elseif(in_array('11184', $data['achievements']['achievementsCompleted'])) {
+				$mplus = '<span style="color: red;">5';
+			}
+			elseif(in_array('11183', $data['achievements']['achievementsCompleted'])) {
+				$mplus = '2';
+			}
 					
 			// ARTIFACT POWER AND LEVEL
 			$key = array_search('30103', $data['achievements']['criteria']);
@@ -262,7 +278,7 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 
 	$class = mysqli_fetch_array(mysqli_query($stream, "SELECT `class`, `color` FROM `classes` WHERE `id` = '" .$class. "'"));
 
-	$columnarray = array('', 'Class', 'Role', 'Total AP', 'Artifact Level', 'Equipped', 'Bags', 'Weapon', 'Mythics', 'EN', 'ToV', 'NH');
+	$columnarray = array('', 'Class', 'Role', 'Total AP', 'Artifact Level', 'Equipped', 'Bags', 'Weapon', 'Mythics', 'M+ Achievement', 'EN', 'ToV', 'NH');
 		
 	foreach($columnarray as $column) {
 		echo '<div class="tc" style="border-bottom: 1px solid grey;">' .$column. '</div>';
@@ -291,7 +307,8 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 	if($tov == '0') { $color_tov = 'style="color: red;"'; } elseif($tov == '3') { $color_tov = 'style="color: green;"'; } elseif($tov > '0') { $color_tov = 'style="color: orange;"'; }
 	if($nh == '0') { $color_nh = 'style="color: red;"'; } elseif($nh == '10') { $color_nh = 'style="color: green;"'; } elseif($nh > '0') { $color_nh = 'style="color: orange;"'; }
 			
-	echo '<div class="tc"><span ' .$color_en. '>' .$en. '/7</span></div>
+	echo '<div class="tc">' .$mplus. '</div>
+	<div class="tc"><span ' .$color_en. '>' .$en. '/7</span></div>
 	<div class="tc"><span ' .$color_tov. '>' .$tov. '/3</span></div>
 	<div class="tc"><span ' .$color_nh. '>' .$nh. '/10</span></div></div>';
 	
