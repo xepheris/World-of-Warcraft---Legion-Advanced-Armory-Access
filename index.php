@@ -4,11 +4,11 @@ echo '<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="author" content="reddit.com/u/xepher1s" />
+<meta name="author" content="Xepheris (EU-Blackmoore)" />
 <meta name="robots" content="index, nofollow" />
 <meta name="language" content="en" />
-<meta name="description" content="" />
-<meta name="keywords" lang="en" content="" />
+<meta name="description" content="Advanced Armory Access including Artifact Power, Level, Mythics done, Highest M+, Equip including tooltips, relative colorization and many more functions!" />
+<meta name="keywords" lang="en" content="advanced armory access, lookup, statistics, artifact power, artifact level, equip, wow, legion, addon, expansion, tracking, loot, council, loot council" />
 <link rel="stylesheet" href="css/core.css" />
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <title>Advanced Armory Access</title>
@@ -29,7 +29,7 @@ var wowhead_tooltips = {
 <body>
 <div id="content"><h1 id="cent"><a href="http://check.artifactpower.info/"><u>A</u>dvanced <u>A</u>rmory <u>A</u>ccess</a></h1>
 <p id="cent"><a href="http://guild.artifactpower.info/">Guild version including many other functions</a></p>
-<p id="cent">known issues: armory still thinks legendaries are 895 & ToV loot = -5 ilvl & Wowhead cannot properly calculate weapon itemlevel on tooltip.</p>
+<p id="cent">known issues: wowhead cannot properly calculate weapon itemlevel on tooltip.</p>
 <p id="cent"><img src="img/me.png" alt="404" /> = missing enchant <img src="img/mg.png" alt="404" /> = missing gem</p>';
 
 $server_EU = array();
@@ -108,15 +108,17 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 			$class = $data['class'];		
 			
 			for($i = '0'; $i <= '4'; $i++) {
-				if($data['talents'][$i]['selected'] == '1') {
-					for($k = '1'; $k <= '7'; $k++) {					
-						if(isset($data['talents'][$i]['talents'][$k]['spec']['name'])) {
-							$specc = $data['talents'][$i]['talents'][$k]['spec']['name'];
+				if($specc == '') {
+					if($data['talents'][$i]['selected'] == '1') {
+						for($k = '0'; $k <= '7'; $k++) {					
+							if(isset($data['talents'][$i]['talents'][$k]['spec']['name'])) {
+								$specc = $data['talents'][$i]['talents'][$k]['spec']['name'];
+							}
 						}
 					}
 				}
 			}
-
+			
 			$weapon = mysqli_fetch_array(mysqli_query($stream, "SELECT `w` FROM `weapons` WHERE `s` = '" .$specc. "' AND `id` = '" .$class. "'"));
 			
 			if($data['items']['mainHand']['id'] == $weapon['w']) {
@@ -351,6 +353,7 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 
 
 echo '</div>
+<p id="cent" style="font-size: 12px;"><a href="https://github.com/xepheris/World-of-Warcraft---Legion-Advanced-Armory-Access">source code</a></p>
 </body>
 </html>';
 
