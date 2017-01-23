@@ -54,9 +54,7 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 	$c = ucwords(strtolower($_GET['c']));
 	$r = $_GET['r'];
 	$s = $_GET['s'];
-	
-	include('mod/dbcon.php');
-	
+		
 	// ENABLE SSL
 	$arrContextOptions=array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, ),);  
 	// REMOVE SPACES IN SERVER AND GUILD NAME TO PREVENT BUGS IN URL
@@ -193,8 +191,23 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 			$ilvlaveragebags = $data['items']['averageItemLevel'];
 			
 			// RAID PROGRESS MYTHIC
+			
+			// EMERALD NIGHTMARE
 			$en = '0';					
 			$enarray = array($data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['33']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['37']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['41']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['45']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['49']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['53']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['57']['quantity']);
+			
+			if(in_array('11194', $data['achievements']['achievementsCompleted'])) {
+				$aotc_en = 'green';
+			}
+			else {
+				$aotc_en = 'red';
+			}
+			if(in_array('11191', $data['achievements']['achievementsCompleted'])) {
+				$ce_en = 'green';
+			}
+			else {
+				$ce_en = 'red';
+			}
 					
 			foreach($enarray as $enmythic) {
 				if($enmythic > '0') {
@@ -202,23 +215,63 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 				}
 			}
 			
+			// TRIAL OF FAILURE
+			
 			$tov = '0';					
 			$tovarray = array($data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['61']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['65']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['69']['quantity']);
-					
+			
+			if(in_array('11581', $data['achievements']['achievementsCompleted'])) {
+				$aotc_tov = 'green';
+			}
+			else {
+				$aotc_tov = 'red';
+			}
+			
+			if(in_array('11580', $data['achievements']['achievementsCompleted'])) {
+				$ce_tov = 'green';
+			}
+			else {
+				$ce_tov = 'red';
+			}
+								
 			foreach($tovarray as $tovmythic) {
 				if($tovmythic > '0') {
 					$tov++;
 				}
 			}
 			
+			// NIGHTHOLD
+			
 			$nh = '0';
 			$nharray = array($data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['73']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['77']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['81']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['85']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['89']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['93']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['97']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['101']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['105']['quantity'], $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['109']['quantity']);
-					
+			
+			if(in_array('11195', $data['achievements']['achievementsCompleted'])) {
+				$aotc_nh = 'green';
+			}
+			else {
+				$aotc_nh = 'red';
+			}
+			
+			if(in_array('11192', $data['achievements']['achievementsCompleted'])) {
+				$ce_nh = 'green';
+			}
+			else {
+				$ce_nh = 'red';
+			}
+			
 			foreach($nharray as $nhmythic) {
 				if($nhmythic > '0') {
 					$nh++;
 				}
 			}
+			
+			// TOMB OF SARGERAS
+			
+			$tos = '0';
+			$tosarray = array();
+			
+			$aotc_tos = 'grey';
+			$ce_tos = 'grey';
 					
 			// MYTHIC AND MYTHIC PLUS STATS
 			$eoa = $data['statistics']['subCategories']['5']['subCategories']['6']['statistics']['2']['quantity'];
@@ -272,6 +325,16 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 		}
 	}	
 	
+	if($alevel < '35') {
+		$alevelthreshold = 'red';
+	}
+	elseif($alevel >= '35' && $alevel < '54') {
+		$alevelthreshold = 'orange';
+	}
+	elseif($alevel == '54') {
+		$alevelthreshold = 'green';
+	}
+	
 	echo '<div class="t">
 	<div class="tb">
 	<div class="tr">';
@@ -280,19 +343,19 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 
 	$class = mysqli_fetch_array(mysqli_query($stream, "SELECT `class`, `color` FROM `classes` WHERE `id` = '" .$class. "'"));
 
-	$columnarray = array('', 'Class', 'Role', 'Total AP', 'Artifact Level', 'Equipped', 'Bags', 'Weapon', 'Mythics', 'M+ Achievement', 'EN', 'ToV', 'NH');
+	$columnarray = array('', 'Class', 'Role', 'Total AP', 'AL', 'Equipped', 'Bags', 'Weapon', 'Mythics', 'M+ Achvmt', 'EN', 'ToV', 'NH', 'ToS');
 		
 	foreach($columnarray as $column) {
 		echo '<div class="tc" style="border-bottom: 1px solid grey;">' .$column. '</div>';
 	}
 	echo '</div>';
 	
-	echo '<div class="tr">	
+	echo '<div class="tr" style="border-bottom: 1px solid grey;">	
 	<div class="tc"><a href="http://' .$r. '.battle.net/wow/en/character/' .$s. '/' .$c. '/simple" title="logged out: ' .round(((time('now')-$llog)/3600), 2). ' hrs. ago">' .$c. '</a></span></div>
 	<div class="tc" style="background:' .$class['color']. ';">' .$class['class']. '</div>
 	<div class="tc">' .$specc. '</div>
 	<div class="tc">' .number_format($totalgained). '</div>
-	<div class="tc">' .$alevel. '</div>
+	<div class="tc"><span style="color: ' .$alevelthreshold. ';">' .$alevel. '</span></div>
 	<div class="tc">' .$ilvlaverage. '</div>
 	<div class="tc">' .$ilvlaveragebags. '</div>';
 	
@@ -308,19 +371,21 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 	if($en == '0') { $color_en = 'style="color: red;"'; } elseif($en == '7') { $color_en = 'style="color: green;"'; } elseif($en > '0') { $color_en = 'style="color: orange;"'; }			
 	if($tov == '0') { $color_tov = 'style="color: red;"'; } elseif($tov == '3') { $color_tov = 'style="color: green;"'; } elseif($tov > '0') { $color_tov = 'style="color: orange;"'; }
 	if($nh == '0') { $color_nh = 'style="color: red;"'; } elseif($nh == '10') { $color_nh = 'style="color: green;"'; } elseif($nh > '0') { $color_nh = 'style="color: orange;"'; }
+	if($tos == '0') { $color_tos = 'style="color: red;"'; } elseif($tos == '10') { $color_tos = 'style="color: green;"'; } elseif($tos > '0') { $color_tos = 'style="color: orange;"'; }
 			
 	echo '<div class="tc">' .$mplus. '</div>
 	<div class="tc"><span ' .$color_en. '>' .$en. '/7</span></div>
 	<div class="tc"><span ' .$color_tov. '>' .$tov. '/3</span></div>
-	<div class="tc"><span ' .$color_nh. '>' .$nh. '/10</span></div></div>';
+	<div class="tc"><span ' .$color_nh. '>' .$nh. '/10</span></div>
+	<div class="tc"><span ' .$color_tos. '>' .$tos. '/9</span></div></div>
+	<div class="tr">';	
 	
-	
-	
-	$columnarray = array('Head', 'Neck', 'Shoulder', 'Back', 'Chest', 'Wrist', 'Hands', 'Waist', 'Legs', 'Feet', 'Ring1', 'Ring2', 'Trinket1', 'Trinket2');
+	$columnarray = array('Head', 'Neck', 'Shoulder', 'Back', 'Chest', 'Wrist', 'Hands', 'Waist', 'Legs', 'Feet', 'Rng1', 'Rng2', 'Trnkt1', 'Trnkt2');
 	foreach($columnarray as $column) {
-		echo '<div class="tc" style="border-bottom: 1px solid grey;">' .$column. '</div>';
+		echo '<div class="tc">' .$column. '</div>';
 	}
-	echo '</div>';
+	echo '</div>
+	<div class="tr">';
 	
 	$items = array('head', 'neck', 'shoulder', 'back', 'chest', 'wrist', 'hands', 'waist', 'legs', 'feet', 'finger1', 'finger2', 'trinket1', 'trinket2');
 	foreach($items as $item) {
@@ -345,15 +410,27 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 		if(${'' .$item. '_ilvl'} >= '880') { $quality = 'style="color: green;"'; }
 		if(${'' .$item. '_ilvl'} >= '860' && ${'' .$item. '_ilvl'} < '880') { $quality = 'style="color: orange;"'; }
 		if(${'' .$item. '_ilvl'} < '860') { $quality = 'style="color: red;"'; }
-		echo '<div class="tc"><a href="http://wowhead.com/item=' .${'' .$item. '_id'}. '&bonus=' .${'' .$item. '_bonus'}. '" rel="gems=' .${'' .$item. '_gem0'}. '&ench=' .${'' .$item. '_ench'}. '" ' .$quality. '>' .${'' .$item. '_ilvl'}. '</a> ' .$gem. ' ' .$enchant. '</div>';
+		echo '<div class="tc" style="border-bottom: 1px solid grey;"><a href="http://wowhead.com/item=' .${'' .$item. '_id'}. '&bonus=' .${'' .$item. '_bonus'}. '" rel="gems=' .${'' .$item. '_gem0'}. '&ench=' .${'' .$item. '_ench'}. '" ' .$quality. '>' .${'' .$item. '_ilvl'}. '</a> ' .$gem. ' ' .$enchant. '</div>';
 		unset($gem); unset($enchant);
 	}
-
+	echo '</div></div></div>
+	<div class="t">
+	<div class="tr">
+	<div class="tc"><a href="http://www.wowhead.com/achievement=11194/" style="text-decoration: none; color: ' .$aotc_en. ';">AOTC: Xavius</a></div>
+	<div class="tc"><a href="http://www.wowhead.com/achievement=11191/" style="text-decoration: none; color: ' .$ce_en. ';">CE: Xavius</a></div>
+	<div class="tc"><a href=http://www.wowhead.com/achievement=11581/" style="text-decoration: none; color: ' .$aotc_tov. ';">AOTC: Helya</a></div>
+	<div class="tc"><a href="http://www.wowhead.com/achievement=11580/" style="text-decoration: none; color: ' .$ce_tov. ';">CE: Helya</a></div>
+	<div class="tc"><a href="http://www.wowhead.com/achievement=11195/" style="text-decoration: none; color: ' .$aotc_nh. ';">AOTC: Gul\'dan</a></div>
+	<div class="tc"><a href="http://www.wowhead.com/achievement=11192/" style="text-decoration: none; color: ' .$ce_nh. ';">CE: Gul\'dan</a></div>
+	<div class="tc"><span style="color: ' .$aotc_tos. ';">AOTC: Kil\'jaeden</span></div>
+	<div class="tc"><span style="color: ' .$ce_tos. ';">CE: Kil\'jaeden</span></div>
+	</div>
+	</div>';
 }
 
 
 echo '</div>
-<p id="cent" style="font-size: 12px;"><a href="https://github.com/xepheris/World-of-Warcraft---Legion-Advanced-Armory-Access">source code</a></p>
+<p id="cent" style="font-size: 12px; text-align: center;"><a href="https://github.com/xepheris/World-of-Warcraft---Legion-Advanced-Armory-Access">source code</a></p>
 </body>
 </html>';
 
