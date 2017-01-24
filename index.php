@@ -54,7 +54,9 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 	$c = ucwords(strtolower($_GET['c']));
 	$r = $_GET['r'];
 	$s = $_GET['s'];
-		
+	
+	include('mod/dbcon.php');
+	
 	// ENABLE SSL
 	$arrContextOptions=array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, ),);  
 	// REMOVE SPACES IN SERVER AND GUILD NAME TO PREVENT BUGS IN URL
@@ -306,6 +308,9 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 			// ARTIFACT POWER AND LEVEL
 			$key = array_search('30103', $data['achievements']['criteria']);
 			$key2 = array_search('29395', $data['achievements']['criteria']);
+			if(in_array('11162', $data['achievements']['achievementsCompleted'])) {
+				$key3 = array_search('11162', $data['achievements']['achievementsCompleted']);
+			}
 		
 			if($key != '') {
 				$criterias = array();
@@ -313,10 +318,111 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 				$criterias = $criterias['0'];
 				$totalgained = $criterias[$key];
 				$alevel = $criterias[$key2];
+				if(in_array('11162', $data['achievements']['achievementsCompleted'])) {
+					$timestamp = array();
+					array_push($timestamp, $data['achievements']['achievementsCompletedTimestamp']);
+					$timestamp = $timestamp['0'];
+					$timestamp_15 = $timestamp[$key3];
+				}
 			}
 			elseif($key == '') {
 				$totalgained = '0';
 				$alevel = '0';
+				$timestamp_15 = '';
+			}
+			
+			if(!empty($timestamp_15)) {
+				$timestamp_15 = substr($timestamp_15, '0', '-3');
+				
+				$affix1 = '<a href="http://www.wowhead.com/affix=1/"><img src="img/1.jpg" /></a> ';
+				$affix2 = '<a href="http://www.wowhead.com/affix=2/"><img src="img/2.jpg" /></a> ';
+				$affix3 = '<a href="http://www.wowhead.com/affix=3/"><img src="img/3.jpg" /></a> ';
+				$affix4 = '<a href="http://www.wowhead.com/affix=4/"><img src="img/4.jpg" /></a> ';
+				$affix5 = '<a href="http://www.wowhead.com/affix=5/"><img src="img/5.jpg" /></a> ';
+				$affix6 = '<a href="http://www.wowhead.com/affix=6/"><img src="img/6.jpg" /></a> ';
+				$affix7 = '<a href="http://www.wowhead.com/affix=7/"><img src="img/7.jpg" /></a> ';
+				$affix8 = '<a href="http://www.wowhead.com/affix=8/"><img src="img/8.jpg" /></a> ';
+				$affix9 = '<a href="http://www.wowhead.com/affix=9/"><img src="img/9.jpg" /></a> ';
+				$affix10 = '<a href="http://www.wowhead.com/affix=10/"><img src="img/10.jpg" /></a> ';
+							
+				// WEEK 1 US RAGING VOLCANIC TYRANNICAL
+				// WEEK 1 EU SANGUINE OVERFLOWING TYRANNICAL
+											
+				if($r == 'EU') {				
+					for($i = '0'; $i <= '96'; $i++) {
+						if(!isset($week_from_start)) {
+							$week_start = 1474009200+60*60*24*7*$i;
+							$week_end = 1474009200+60*60*24*7*($i+1);
+						
+							if($timestamp_15 > $week_start && $timestamp_15 < $week_end) {
+								$week_from_start = $i+1;
+							}
+							
+							if($week_from_start == '1' || $week_from_start == '9' || $week_from_start == '17' || $week_from_start == '25' || $week_from_start == '33' || $week_from_start == '41' || $week_from_start == '49' || $week_from_start == '57' || $week_from_start == '65' || $week_from_start == '73' || $week_from_start == '81' || $week_from_start == '89') {
+								$affixes = $affix8.$affix1.$affix9; // SANGUINE OVERFLOWING TYRANNICAL
+							}
+							elseif($week_from_start == '2' || $week_from_start == '10' || $week_from_start == '18' || $week_from_start == '26' || $week_from_start == '34' || $week_from_start == '42' || $week_from_start == '50' || $week_from_start == '58' || $week_from_start == '66' || $week_from_start == '74' || $week_from_start == '82' || $week_from_start == '90') {
+								$affixes = $affix5.$affix2.$affix10; // TEEMING SKITTISH FORTIFIED
+							}
+							elseif($week_from_start == '3' || $week_from_start == '11' || $week_from_start == '19' || $week_from_start == '27' || $week_from_start == '35' || $week_from_start == '43' || $week_from_start == '51' || $week_from_start == '59' || $week_from_start == '67' || $week_from_start == '75' || $week_from_start == '83' || $week_from_start == '91') {
+								$affixes = $affix6.$affix4.$affix10; // RAGING NECROTIC FORTIFIED
+							}
+							elseif($week_from_start == '4' || $week_from_start == '12' || $week_from_start == '20' || $week_from_start == '28' || $week_from_start == '36' || $week_from_start == '44' || $week_from_start == '52' || $week_from_start == '60' || $week_from_start == '68' || $week_from_start == '76' || $week_from_start == '84' || $week_from_start == '92') {
+								$affixes = $affix7.$affix1.$affix9; // BOLSTERING OVERFLOWING TYRANNICAL
+							}
+							elseif($week_from_start == '5' || $week_from_start == '13' || $week_from_start == '21' || $week_from_start == '29' || $week_from_start == '37' || $week_from_start == '45' || $week_from_start == '53' || $week_from_start == '61' || $week_from_start == '69' || $week_from_start == '77' || $week_from_start == '85' || $week_from_start == '93') {
+								$affixes = $affix8.$affix3.$affix10; // SANGUINE VOLCANIC FORTIFIED
+							}
+							elseif($week_from_start == '6' || $week_from_start == '14' || $week_from_start == '22' || $week_from_start == '30' || $week_from_start == '38' || $week_from_start == '46' || $week_from_start == '54' || $week_from_start == '62' || $week_from_start == '70' || $week_from_start == '78' || $week_from_start == '86' || $week_from_start == '94') {
+								$affixes = $affix5.$affix4.$affix9; // TEEMING NECROTIC TYRANNICAL
+							}
+							elseif($week_from_start == '7' || $week_from_start == '15' || $week_from_start == '23' || $week_from_start == '31' || $week_from_start == '39' || $week_from_start == '47' || $week_from_start == '55' || $week_from_start == '63' || $week_from_start == '71' || $week_from_start == '79' || $week_from_start == '87' || $week_from_start == '95') {
+								$affixes = $affix6.$affix3.$affix9; // RAGING VOLCANIC TYRANNICAL
+							}
+							elseif($week_from_start == '8' || $week_from_start == '16' || $week_from_start == '24' || $week_from_start == '32' || $week_from_start == '40' || $week_from_start == '48' || $week_from_start == '56' || $week_from_start == '64' || $week_from_start == '72' || $week_from_start == '80' || $week_from_start == '88' || $week_from_start == '96') {
+								$affixes = $affix7.$affix3.$affix9; // BOLSTERING SKITTISH FORTIFIED
+							}
+						}
+					}
+				}
+				elseif($r == 'US') {
+					for($i = '0'; $i <= '96'; $i++) {
+						if(!isset($week_from_start)) {
+							$week_start = 1473922800+60*60*24*7*$i;
+							$week_end = 1473922800+60*60*24*7*($i+1);
+						
+							if($timestamp_15 > $week_start && $timestamp_15 < $week_end) {
+								$week_from_start = $i+1;
+							}
+							
+							if($week_from_start == '1' || $week_from_start == '9' || $week_from_start == '17' || $week_from_start == '25' || $week_from_start == '33' || $week_from_start == '41' || $week_from_start == '49' || $week_from_start == '57' || $week_from_start == '65' || $week_from_start == '73' || $week_from_start == '81' || $week_from_start == '89') {
+								$affixes = $affix6.$affix3.$affix9; // RAGING VOLCANIC TYRANNICAL
+							}
+							elseif($week_from_start == '2' || $week_from_start == '10' || $week_from_start == '18' || $week_from_start == '26' || $week_from_start == '34' || $week_from_start == '42' || $week_from_start == '50' || $week_from_start == '58' || $week_from_start == '66' || $week_from_start == '74' || $week_from_start == '82' || $week_from_start == '90') {
+								$affixes = $affix7.$affix3.$affix9; // BOLSTERING SKITTISH FORTIFIED
+							}
+							elseif($week_from_start == '3' || $week_from_start == '11' || $week_from_start == '19' || $week_from_start == '27' || $week_from_start == '35' || $week_from_start == '43' || $week_from_start == '51' || $week_from_start == '59' || $week_from_start == '67' || $week_from_start == '75' || $week_from_start == '83' || $week_from_start == '91') {
+								$affixes = $affix8.$affix1.$affix9; // SANGUINE OVERFLOWING TYRANNICAL
+							}
+							elseif($week_from_start == '4' || $week_from_start == '12' || $week_from_start == '20' || $week_from_start == '28' || $week_from_start == '36' || $week_from_start == '44' || $week_from_start == '52' || $week_from_start == '60' || $week_from_start == '68' || $week_from_start == '76' || $week_from_start == '84' || $week_from_start == '92') {
+								$affixes = $affix5.$affix2.$affix10; // TEEMING SKITTISH FORTIFIED
+							}
+							elseif($week_from_start == '5' || $week_from_start == '13' || $week_from_start == '21' || $week_from_start == '29' || $week_from_start == '37' || $week_from_start == '45' || $week_from_start == '53' || $week_from_start == '61' || $week_from_start == '69' || $week_from_start == '77' || $week_from_start == '85' || $week_from_start == '93') {
+								$affixes = $affix6.$affix4.$affix10; // RAGING NECROTIC FORTIFIED
+							}
+							elseif($week_from_start == '6' || $week_from_start == '14' || $week_from_start == '22' || $week_from_start == '30' || $week_from_start == '38' || $week_from_start == '46' || $week_from_start == '54' || $week_from_start == '62' || $week_from_start == '70' || $week_from_start == '78' || $week_from_start == '86' || $week_from_start == '94') {
+								$affixes = $affix7.$affix1.$affix9; // BOLSTERING OVERFLOWING TYRANNICAL
+							}
+							elseif($week_from_start == '7' || $week_from_start == '15' || $week_from_start == '23' || $week_from_start == '31' || $week_from_start == '39' || $week_from_start == '47' || $week_from_start == '55' || $week_from_start == '63' || $week_from_start == '71' || $week_from_start == '79' || $week_from_start == '87' || $week_from_start == '95') {
+								$affixes = $affix8.$affix3.$affix10; // SANGUINE VOLCANIC FORTIFIED
+							}
+							elseif($week_from_start == '8' || $week_from_start == '16' || $week_from_start == '24' || $week_from_start == '32' || $week_from_start == '40' || $week_from_start == '48' || $week_from_start == '56' || $week_from_start == '64' || $week_from_start == '72' || $week_from_start == '80' || $week_from_start == '88' || $week_from_start == '96') {
+								$affixes = $affix5.$affix4.$affix9; // TEEMING NECROTIC TYRANNICAL								
+							}
+						}
+					}
+					
+				}
 			}
 		
 			if(strpos($s, '-') !== false) {
@@ -324,7 +430,7 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 			}
 		}
 	}	
-	
+		
 	if($alevel < '35') {
 		$alevelthreshold = 'red';
 	}
@@ -373,7 +479,7 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 	if($nh == '0') { $color_nh = 'style="color: red;"'; } elseif($nh == '10') { $color_nh = 'style="color: green;"'; } elseif($nh > '0') { $color_nh = 'style="color: orange;"'; }
 	if($tos == '0') { $color_tos = 'style="color: red;"'; } elseif($tos == '10') { $color_tos = 'style="color: green;"'; } elseif($tos > '0') { $color_tos = 'style="color: orange;"'; }
 			
-	echo '<div class="tc">' .$mplus. '</div>
+	echo '<div class="tc">' .$mplus. ' ' .$affixes. '</div>
 	<div class="tc"><span ' .$color_en. '>' .$en. '/7</span></div>
 	<div class="tc"><span ' .$color_tov. '>' .$tov. '/3</span></div>
 	<div class="tc"><span ' .$color_nh. '>' .$nh. '/10</span></div>
@@ -407,9 +513,9 @@ if(isset($_GET['c']) && isset($_GET['s']) && isset($_GET['r'])) {
 				}
 			}
 		}
-		if(${'' .$item. '_ilvl'} >= '880') { $quality = 'style="color: green;"'; }
-		if(${'' .$item. '_ilvl'} >= '860' && ${'' .$item. '_ilvl'} < '880') { $quality = 'style="color: orange;"'; }
-		if(${'' .$item. '_ilvl'} < '860') { $quality = 'style="color: red;"'; }
+		if(${'' .$item. '_ilvl'} >= '905') { $quality = 'style="color: green;"'; }
+		if(${'' .$item. '_ilvl'} >= '870' && ${'' .$item. '_ilvl'} < '905') { $quality = 'style="color: orange;"'; }
+		if(${'' .$item. '_ilvl'} < '870') { $quality = 'style="color: red;"'; }
 		echo '<div class="tc" style="border-bottom: 1px solid grey;"><a href="http://wowhead.com/item=' .${'' .$item. '_id'}. '&bonus=' .${'' .$item. '_bonus'}. '" rel="gems=' .${'' .$item. '_gem0'}. '&ench=' .${'' .$item. '_ench'}. '" ' .$quality. '>' .${'' .$item. '_ilvl'}. '</a> ' .$gem. ' ' .$enchant. '</div>';
 		unset($gem); unset($enchant);
 	}
